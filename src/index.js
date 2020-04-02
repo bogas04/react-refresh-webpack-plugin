@@ -6,10 +6,13 @@ const { errorOverlay, refreshUtils } = require('./runtime/globals');
 class ReactRefreshPlugin {
   /**
    * @param {import('./types').ReactRefreshPluginOptions} [options] Options for react-refresh-plugin.
-   * @returns {void}
    */
   constructor(options) {
-    this.options = validateOptions(options);
+    /**
+     * @readonly
+     * @type {import('./types').ValidatedPluginOptions}
+     */
+    this.options = validateOptions(options || {});
   }
 
   /**
@@ -47,6 +50,7 @@ class ReactRefreshPlugin {
       // Check for existence of HotModuleReplacementPlugin in the plugin list
       // It is the foundation to this plugin working correctly
       if (
+        !compiler.options.plugins ||
         !compiler.options.plugins.find(
           // It's validated with the name rather than the constructor reference
           // because a project might contain multiple references to Webpack
@@ -114,7 +118,7 @@ class ReactRefreshPlugin {
             return source;
           }
 
-          return createRefreshTemplate(source, chunk);
+          return createRefreshTemplate(source);
         }
       );
     });
